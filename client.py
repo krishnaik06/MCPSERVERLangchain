@@ -19,8 +19,12 @@ async def main():
             "weather": {
                 "url": "http://localhost:8000/mcp",  # Ensure server is running here
                 "transport": "streamable_http",
+            },
+            "cars":{
+                "command":"python",
+                "args":["cars.py"],
+                "transport":"stdio",
             }
-
         }
     )
 
@@ -32,16 +36,31 @@ async def main():
     agent=create_react_agent(
         model,tools
     )
+    # print("Available tools: ",tools)
+    # math_response = await agent.ainvoke(
+    #     {"messages": [{"role": "user", "content": "what's (3 + 5) x 12?"}]}
+    # )
 
-    math_response = await agent.ainvoke(
-        {"messages": [{"role": "user", "content": "what's (3 + 5) x 12?"}]}
-    )
+    # print("Math response:", math_response['messages'][-1].content)
+    # print("---"*10)
+    # weather_response = await agent.ainvoke(
+    #     {"messages": [{"role": "user", "content": "what is the weather in California?"}]}
+    # )
+    # print("Weather response:", weather_response['messages'][-1].content)
+    # print("---"*10)
+    # car_response = await agent.ainvoke(
+    #     {"messages": [{"role": "user", "content": "List the avilable cars in the showroom"}]}
+    # )
+    # print("Cars response: ", car_response['messages'][-1].content)
 
-    print("Math response:", math_response['messages'][-1].content)
-
-    weather_response = await agent.ainvoke(
-        {"messages": [{"role": "user", "content": "what is the weather in California?"}]}
-    )
-    print("Weather response:", weather_response['messages'][-1].content)
+    while True:
+        user_input=input("Enter your query: ")
+        if user_input.lower() in ["exit","quit","bye"]:
+            break
+        else:
+            response=await agent.ainvoke(
+                {"messages": [{"role": "user", "content": user_input}]}
+            )
+            print("Response: ", response['messages'][-1].content)
 
 asyncio.run(main())
